@@ -315,7 +315,19 @@ void test_rb_constraints(const key_t arr[], const size_t n)
 // rbtree should manage distinct values
 void test_distinct_values()
 {
-  const key_t entries[] = {10, 5, 8, 34, 67, 23, 156, 24, 2, 12};
+  const key_t entries[] = {
+      10,
+      5,
+      -8,
+      34,
+      -67,
+      23,
+      -156,
+      24,
+      2,
+      12,
+      0,
+  };
   const size_t n = sizeof(entries) / sizeof(entries[0]);
   test_rb_constraints(entries, n);
 }
@@ -323,14 +335,14 @@ void test_distinct_values()
 // rbtree should manage values with duplicate
 void test_duplicate_values()
 {
-  const key_t entries[] = {10, 5, 5, 34, 6, 23, 12, 12, 6, 12};
+  const key_t entries[] = {10, 5, 5, 34, -6, 23, 12, 12, -6, 12, 10, 10, 6};
   const size_t n = sizeof(entries) / sizeof(entries[0]);
   test_rb_constraints(entries, n);
 }
 
 void test_minmax_suite()
 {
-  key_t entries[] = {10, 5, 8, 34, 67, 23, 156, 24, 2, 12};
+  key_t entries[] = {10, 5, -8, 34, 67, 0, -23, 156, 24, 2, -12, 26, 35};
   const size_t n = sizeof(entries) / sizeof(entries[0]);
   test_minmax(entries, n);
 }
@@ -340,7 +352,7 @@ void test_to_array_suite()
   rbtree *t = new_rbtree();
   assert(t != NULL);
 
-  key_t entries[] = {10, 5, 8, 34, 67, 23, 156, 24, 2, 12, 24, 36, 990, 25};
+  key_t entries[] = {0, -5, 8, 34, 67, -22, 156, 24, 2, 12, 24, 36, 990, 25};
   const size_t n = sizeof(entries) / sizeof(entries[0]);
   test_to_array(t, entries, n);
 
@@ -358,15 +370,11 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n)
   for (int i = 0; i < n; i++)
   {
     node_t *p = rbtree_find(t, arr[i]);
-    // printf("arr[%d] = %d\n", i, arr[i]);
-    if (p == NULL)
-    {
-      printf("Failed to find key: %d at index %d\n", arr[i], i);
-    }
     assert(p != NULL);
     assert(p->key == arr[i]);
     rbtree_erase(t, p);
   }
+
   for (int i = 0; i < n; i++)
   {
     node_t *p = rbtree_find(t, arr[i]);
@@ -389,11 +397,13 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n)
 
 void test_find_erase_fixed()
 {
-  const key_t arr[] = {10, 5, 8, 34, 67, 23, 156, 24, 2, 12, 24, 36, 990, 25};
+  const key_t arr[] = {10, -5, 8, 34, 67, 33, 156, -24, 2, 12, 24, 36, 990, 25, 127, -77, 0};
   const size_t n = sizeof(arr) / sizeof(arr[0]);
   rbtree *t = new_rbtree();
   assert(t != NULL);
+
   test_find_erase(t, arr, n);
+
   delete_rbtree(t);
 }
 
@@ -416,15 +426,15 @@ void test_find_erase_rand(const size_t n, const unsigned int seed)
 int main(void)
 {
   test_init();
-  test_insert_single(1024);
-  test_find_single(512, 1024);
-  test_erase_root(128);
+  test_insert_single(0);
+  test_find_single(512, -512);
+  test_erase_root(-1);
   test_find_erase_fixed();
   test_minmax_suite();
   test_to_array_suite();
   test_distinct_values();
   test_duplicate_values();
   test_multi_instance();
-  test_find_erase_rand(10000, 17);
+  test_find_erase_rand(1000000, 55);
   printf("Passed all tests!\n");
 }
