@@ -329,6 +329,7 @@ int rbtree_erase(rbtree *t, node_t *p)
   {
     rb_delete_fixup(t, x); // x는 y의 위치를 대신 -> y의 전 색에 따라 fixup 실행
   }
+  free(p);
   return 1;
 }
 void rb_delete_fixup(rbtree *t, node_t *x)
