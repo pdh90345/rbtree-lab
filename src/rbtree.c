@@ -104,7 +104,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key)
 
   rbtree_insert_fixup(t, new_node);
 
-  return t->root;
+  return new_node;
 }
 
 void rbtree_insert_fixup(rbtree *t, node_t *new_node)
